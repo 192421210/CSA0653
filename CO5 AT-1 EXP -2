@@ -1,0 +1,66 @@
+#YUGEETHA 192421210
+# Exam Timetabling using Graph Coloring (Backtracking)
+# Conflict Graph
+# Edge means the exams have common students
+graph = {
+    'Math': ['Physics', 'Chemistry'],
+    'Physics': ['Math', 'Biology'],
+    'Chemistry': ['Math', 'Biology'],
+    'Biology': ['Physics', 'Chemistry']
+}
+# Number of available time slots
+time_slots = 3
+# Students registered for each exam
+students = {
+    'Math': 40,
+    'Physics': 35,
+    'Chemistry': 25,
+    'Biology': 30
+}
+# Room capacity
+room_capacity = 50
+# Stores assigned time slots
+schedule = {}
+def is_safe(exam, slot):
+    """
+    Check if assigning a slot to an exam is valid.
+    """
+    # Room capacity constraint
+    if students[exam] > room_capacity:
+        return False
+    # Conflict constraint
+    for neighbor in graph[exam]:
+        if neighbor in schedule and schedule[neighbor] == slot:
+            return False
+    return True
+def graph_coloring(exams, index):
+    """
+    Backtracking function for assigning slots.
+    """
+    # Base case
+    if index == len(exams):
+        return True
+    current_exam = exams[index]
+    # Try each available slot
+    for slot in range(1, time_slots + 1):
+
+        if is_safe(current_exam, slot):
+
+            schedule[current_exam] = slot
+
+            if graph_coloring(exams, index + 1):
+                return True
+
+            # Backtrack
+            del schedule[current_exam]
+    return False
+exam_list = list(graph.keys())
+
+if graph_coloring(exam_list, 0):
+    print("Conflict-Free Exam Timetable:\n")
+
+    for exam, slot in schedule.items():
+        print(f"{exam} --> Time Slot {slot}")
+
+else:
+    print("No feasible timetable exists.")
