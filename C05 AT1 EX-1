@@ -1,0 +1,60 @@
+#YUGEETHA 192421210
+# Job Scheduling using Backtracking
+# Employees
+employees = ["E1", "E2", "E3"]
+# Jobs with deadlines
+jobs = {
+    "J1": 3,
+    "J2": 2,
+    "J3": 4
+}
+# Employee availability times
+availability = {
+    "E1": 2,
+    "E2": 3,
+    "E3": 4
+}
+# Store assignments
+assignment = {}
+
+def is_safe(job, employee):
+    """
+    Check whether assigning a job to an employee
+    satisfies all constraints.
+    """
+    
+    # Employee should not already have a job
+    if employee in assignment.values():
+        return False
+
+    # Employee availability must be before or equal to deadline
+    if availability[employee] > jobs[job]:      
+return False
+    return True
+def backtrack(job_list, index):
+    """
+    Recursive backtracking function.
+    """
+    
+    # Base case: all jobs assigned
+    if index == len(job_list):
+        return True
+    current_job = job_list[index]
+    # Try every employee
+    for employee in employees:
+        if is_safe(current_job, employee):
+            # Assign
+            assignment[current_job] = employee
+            # Recur
+            if backtrack(job_list, index + 1):
+                return True
+            # Backtrack
+            del assignment[current_job]
+    return False
+job_list = list(jobs.keys())
+if backtrack(job_list, 0):
+    print("Feasible Schedule Found:\n")
+    for job, emp in assignment.items():
+        print(f"{job} --> {emp}")
+else:
+    print("No feasible schedule exists.")
